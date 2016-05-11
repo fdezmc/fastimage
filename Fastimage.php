@@ -17,9 +17,16 @@ class FastImage
 	private $str;
 	private $type;
 	private $handle;
+	private $initialUserAgent;
+	private $userAgent;
 	
-	public function __construct($uri = null)
+	public function __construct($uri = null, $userAgent = null)
 	{
+		if (!is_null($userAgent)) {
+			$this->initialUserAgent = ini_get ( 'user_agent' );
+			$this->userAgent = $userAgent;
+		}
+
 		if ($uri) $this->load($uri);
 	}
 
@@ -27,7 +34,9 @@ class FastImage
 	public function load($uri)
 	{
 		if ($this->handle) $this->close();
-		
+
+		if (!is_null($this->userAgent)) ini_set('user_agent', $this->userAgent);
+
 		$this->handle = fopen($uri, 'r');
 	}
 
@@ -41,6 +50,8 @@ class FastImage
 			$this->type = null;
 			$this->str = null;
 		}
+
+		if (!is_null($this->userAgent)) ini_set('user_agent',$this->initialUserAgent);
 	}
 
 
